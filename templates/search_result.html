@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results - Flutter Package Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div class="flex h-screen overflow-hidden">
+      <!-- Sidebar -->
+      <aside class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block">
+        <div class="p-4 border-b border-gray-700">
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-cube text-xl"></i>
+            <h1 class="text-xl font-bold">FlutterPackage</h1>
+          </div>
+        </div>
+        <nav class="p-4">
+          <div class="mb-6">
+            <p class="text-xs uppercase text-gray-400 font-medium mb-2">Main</p>
+            <ul class="space-y-1">
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-home"></i>
+                  <span>Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-600 text-white"
+                >
+                  <i class="fas fa-search"></i>
+                  <span>Search</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-compass"></i>
+                  <span>Explore</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-star"></i>
+                  <span>Featured</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mb-6">
+            <p class="text-xs uppercase text-gray-400 font-medium mb-2">
+              My Packages
+            </p>
+            <ul class="space-y-1">
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-cubes"></i>
+                  <span>All Packages</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-upload"></i>
+                  <span>Upload Package</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-heart"></i>
+                  <span>Favorites</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p class="text-xs uppercase text-gray-400 font-medium mb-2">
+              Account
+            </p>
+            <ul class="space-y-1">
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-user-circle"></i>
+                  <span>Profile</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-cog"></i>
+                  <span>Settings</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Mobile sidebar toggle -->
+      <div class="md:hidden fixed bottom-4 right-4 z-50">
+        <button
+          id="sidebar-toggle"
+          class="bg-blue-600 text-white p-3 rounded-full shadow-lg"
+        >
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top navbar -->
+        <header class="bg-white border-b border-gray-200">
+          <div class="flex items-center justify-between px-6 py-3">
+            <div class="md:hidden flex items-center">
+              <button
+                id="mobile-menu-button"
+                class="text-gray-500 hover:text-gray-700"
+              >
+                <i class="fas fa-bars text-xl"></i>
+              </button>
+            </div>
+
+            <div class="flex-1 max-w-3xl mx-auto">
+              <form class="relative">
+                <input
+                  type="text"
+                  value="state management"
+                  placeholder="Search for packages..."
+                  class="w-full py-2 pl-10 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                >
+                  <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <button class="flex items-center space-x-2">
+                  <div
+                    class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white"
+                  >
+                    <span class="text-sm font-medium">JD</span>
+                  </div>
+                  <span class="hidden md:inline-block text-sm font-medium"
+                    >John Doe</span
+                  >
+                  <i class="fas fa-chevron-down text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Content area -->
+        <main class="flex-1 overflow-y-auto p-6">
+          <div class="mb-6">
+            <div class="flex justify-between items-center">
+              <h2 class="text-2xl font-bold">
+                Search Results:
+                <span class="text-blue-600">state management</span>
+              </h2>
+              <div class="text-sm text-gray-500">42 results found</div>
+            </div>
+          </div>
+
+          <!-- Filter and sort options -->
+          <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+            <div
+              class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
+            >
+              <div class="flex flex-wrap gap-2">
+                <button
+                  class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium"
+                >
+                  All Categories
+                </button>
+                <button
+                  class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium"
+                >
+                  State Management
+                </button>
+                <button
+                  class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium"
+                >
+                  UI
+                </button>
+                <button
+                  class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium"
+                >
+                  More Filters
+                  <i class="fas fa-chevron-down ml-1"></i>
+                </button>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-500">Sort by:</span>
+                <select
+                  class="bg-white border border-gray-300 text-gray-700 py-1.5 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                >
+                  <option>Relevance</option>
+                  <option>Most Downloads</option>
+                  <option>Recently Updated</option>
+                  <option>Highest Rating</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search Results -->
+          <div class="space-y-6">
+            <!-- Result 1 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <div class="p-6">
+                <div class="flex items-center mb-4">
+                  <div class="bg-blue-600 text-white p-3 rounded mr-4">
+                    <i class="fas fa-code-branch text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-semibold mb-1">flutter_bloc</h3>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-gray-500">by</span>
+                      <span class="text-sm font-medium">Bloc Team</span>
+                      <span
+                        class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                        >Verified</span
+                      >
+                    </div>
+                  </div>
+                  <div class="ml-auto flex flex-col items-end">
+                    <div class="flex items-center mb-1">
+                      <div class="flex text-yellow-400 mr-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                      </div>
+                      <span class="text-sm text-gray-500">4.8 (620)</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <i class="fas fa-download mr-1"></i>
+                      <span>250K+ downloads</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                  Flutter Widgets that make it easy to implement the BLoC
+                  (Business Logic Component) design pattern. Built to be
+                  incredibly easy to use, testable, and maintainable.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >State Management</span
+                  >
+                  <span
+                    class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >BLoC Pattern</span
+                  >
+                  <span
+                    class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Reactive</span
+                  >
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-sm">
+                    <span class="font-medium">Latest:</span>
+                    <span class="text-gray-500">v8.1.2</span>
+                    <span class="text-gray-400 mx-2">•</span>
+                    <span class="text-gray-500">Updated 3 days ago</span>
+                  </div>
+                  <div class="flex space-x-3">
+                    <a
+                      href="#"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      View Details
+                    </a>
+                    <button
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      Install
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result 2 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <div class="p-6">
+                <div class="flex items-center mb-4">
+                  <div class="bg-purple-600 text-white p-3 rounded mr-4">
+                    <i class="fas fa-layer-group text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-semibold mb-1">provider</h3>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-gray-500">by</span>
+                      <span class="text-sm font-medium">Flutter Team</span>
+                      <span
+                        class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                        >Official</span
+                      >
+                    </div>
+                  </div>
+                  <div class="ml-auto flex flex-col items-end">
+                    <div class="flex items-center mb-1">
+                      <div class="flex text-yellow-400 mr-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                      </div>
+                      <span class="text-sm text-gray-500">5.0 (824)</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <i class="fas fa-download mr-1"></i>
+                      <span>320K+ downloads</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                  A wrapper around InheritedWidget to make them easier to use
+                  and more reusable. Recommended by the Flutter team for simple
+                  state management solutions.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >State Management</span
+                  >
+                  <span
+                    class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Dependency Injection</span
+                  >
+                  <span
+                    class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >InheritedWidget</span
+                  >
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-sm">
+                    <span class="font-medium">Latest:</span>
+                    <span class="text-gray-500">v6.0.5</span>
+                    <span class="text-gray-400 mx-2">•</span>
+                    <span class="text-gray-500">Updated 1 week ago</span>
+                  </div>
+                  <div class="flex space-x-3">
+                    <a
+                      href="#"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      View Details
+                    </a>
+                    <button
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      Install
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result 3 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <div class="p-6">
+                <div class="flex items-center mb-4">
+                  <div class="bg-red-600 text-white p-3 rounded mr-4">
+                    <i class="fas fa-heart text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-semibold mb-1">flutter_riverpod</h3>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-gray-500">by</span>
+                      <span class="text-sm font-medium">Remi Rousselet</span>
+                    </div>
+                  </div>
+                  <div class="ml-auto flex flex-col items-end">
+                    <div class="flex items-center mb-1">
+                      <div class="flex text-yellow-400 mr-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                      </div>
+                      <span class="text-sm text-gray-500">4.8 (315)</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <i class="fas fa-download mr-1"></i>
+                      <span>95K+ downloads</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                  A reactive caching and data-binding framework built on top of
+                  provider that makes state management simple, while still being
+                  incredibly powerful and flexible.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >State Management</span
+                  >
+                  <span
+                    class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Provider</span
+                  >
+                  <span
+                    class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Reactive</span
+                  >
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-sm">
+                    <span class="font-medium">Latest:</span>
+                    <span class="text-gray-500">v2.3.6</span>
+                    <span class="text-gray-400 mx-2">•</span>
+                    <span class="text-gray-500">Updated 2 weeks ago</span>
+                  </div>
+                  <div class="flex space-x-3">
+                    <a
+                      href="#"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      View Details
+                    </a>
+                    <button
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      Install
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Result 4 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+              <div class="p-6">
+                <div class="flex items-center mb-4">
+                  <div class="bg-green-600 text-white p-3 rounded mr-4">
+                    <i class="fas fa-store text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-semibold mb-1">redux</h3>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-gray-500">by</span>
+                      <span class="text-sm font-medium">Redux Team</span>
+                    </div>
+                  </div>
+                  <div class="ml-auto flex flex-col items-end">
+                    <div class="flex items-center mb-1">
+                      <div class="flex text-yellow-400 mr-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                      </div>
+                      <span class="text-sm text-gray-500">4.1 (210)</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <i class="fas fa-download mr-1"></i>
+                      <span>70K+ downloads</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                  A predictable state container for Dart and Flutter
+                  applications. Redux helps you write applications that behave
+                  consistently and are easy to test.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >State Management</span
+                  >
+                  <span
+                    class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Redux</span
+                  >
+                  <span
+                    class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded"
+                    >Immutable</span
+                  >
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-sm">
+                    <span class="font-medium">Latest:</span>
+                    <span class="text-gray-500">v5.0.0</span>
+                    <span class="text-gray-400 mx-2">•</span>
+                    <span class="text-gray-500">Updated 1 month ago</span>
+                  </div>
+                  <div class="flex space-x-3">
+                    <a
+                      href="#"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      View Details
+                    </a>
+                    <button
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium"
+                    >
+                      Install
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- More Results Button -->
+            <div class="text-center mt-8">
+              <button
+                class="bg-white hover:bg-gray-100 text-gray-800 font-medium py-2 px-4 border border-gray-300 rounded-lg inline-flex items-center"
+              >
+                <span>Show more results</span>
+                <i class="fas fa-chevron-down ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex items-center justify-between mt-8">
+            <div class="flex items-center space-x-1">
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="px-3 py-1 rounded-md bg-blue-600 text-white">
+                1
+              </button>
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                2
+              </button>
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                3
+              </button>
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                4
+              </button>
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                5
+              </button>
+              <button
+                class="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+            <div class="text-sm text-gray-500">
+              Showing <span class="font-medium">1-4</span> of
+              <span class="font-medium">42</span> packages
+            </div>
+          </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 p-4 mt-auto">
+          <div
+            class="flex flex-col md:flex-row md:justify-between md:items-center text-sm text-gray-500"
+          >
+            <div class="mb-2 md:mb-0">
+              © 2025 FlutterPackage. All rights reserved.
+            </div>
+            <div class="flex space-x-4">
+              <a href="#" class="hover:text-gray-700">Terms</a>
+              <a href="#" class="hover:text-gray-700">Privacy</a>
+              <a href="#" class="hover:text-gray-700">Contact</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- JavaScript for sidebar toggle on mobile -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const sidebarToggle = document.getElementById('sidebar-toggle')
+        const mobileSidebar = document.getElementById('mobile-sidebar')
+
+        if (sidebarToggle && mobileSidebar) {
+          sidebarToggle.addEventListener('click', () => {
+            if (mobileSidebar.classList.contains('-translate-x-full')) {
+              mobileSidebar.classList.remove('-translate-x-full')
+            } else {
+              mobileSidebar.classList.add('-translate-x-full')
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>
