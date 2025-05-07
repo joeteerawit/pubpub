@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:15
+    container_name: pubpub_db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pubpub_dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - pubpub_net
+
+volumes:
+  pgdata:
+
+networks:
+  pubpub_net:
