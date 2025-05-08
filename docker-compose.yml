@@ -1,20 +1,21 @@
 services:
   db:
-    image: postgres:15
-    container_name: pubpub_db
+    image: postgres:15-alpine
+    container_name: pubpub_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pubpub_dev
     ports:
       - '5432:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pubpub_dev
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - pubpub_net
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  pgdata:
-
-networks:
-  pubpub_net:
+  postgres_data:

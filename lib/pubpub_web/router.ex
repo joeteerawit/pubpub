@@ -20,10 +20,30 @@ defmodule PubpubWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", PubpubWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", PubpubWeb do
+    pipe_through :api
+
+    # List all versions of a package
+    get "/packages/:package", PackageController, :list_versions
+
+    # Publishing Packages
+    get "/packages/versions/new", PackageController, :new_version
+
+    # List security advisories for a package
+    get "/packages/:package/advisories", PackageController, :advisories
+
+    # (Deprecated) Inspect a specific version of a package
+    get "/packages/:package/versions/:version", PackageController, :show_version
+
+    # Handle uploads - NOTE: Changed to POST method
+    post "/upload", PackageController, :upload
+    get "/finalize", PackageController, :finalize
+  end
+
+  scope "/packages", PubpubWeb do
+    # (Deprecated) Download a specific version of a package
+    get "/packages/:package/versions/:version", PackageController, :download
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:pubpub, :dev_routes) do
