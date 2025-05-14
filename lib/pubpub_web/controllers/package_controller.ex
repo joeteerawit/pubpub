@@ -3,15 +3,11 @@ defmodule PubpubWeb.PackageController do
 
   require Logger
 
-  alias Pubpub.Packages.GetArchivePath
-  alias Pubpub.Packages.GetVersionMetadata
-  alias Pubpub.Packages.FinalizeUpload
-  alias Pubpub.Packages.ListAllVersion
-  alias Pubpub.Packages.Upload
+  alias Pubpub.Packages
 
   @spec list_versions(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def list_versions(conn, %{"package" => package_name}) do
-    case ListAllVersion.perform(package_name) do
+    case Packages.get_all_versions(package_name) do
       {:ok, package} ->
         conn
         |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
@@ -52,7 +48,7 @@ defmodule PubpubWeb.PackageController do
 
   @spec show_version(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def show_version(conn, %{"package" => package_name, "version" => version}) do
-    case GetVersionMetadata.perform(package_name, version) do
+    case Packages.get_version_metadata(package_name, version) do
       {:ok, metadata} ->
         conn
         |> put_flutter_headers()
@@ -73,7 +69,7 @@ defmodule PubpubWeb.PackageController do
 
   @spec download(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def download(conn, %{"package" => package_name, "version" => version}) do
-    case GetArchivePath.perform(package_name, version) do
+    case Packages.get_archive_path(package_name, version) do
       {:ok, path} ->
         send_file(conn, 200, path)
 
@@ -105,7 +101,7 @@ defmodule PubpubWeb.PackageController do
   }
   """
   def upload(conn, %{"package_name" => package_name, "version" => version} = params) do
-    case Upload.perform(params) do
+    case Packages.upload(params) do
       {:ok, _} ->
         conn
         |> put_status(:no_content)
@@ -118,8 +114,8 @@ defmodule PubpubWeb.PackageController do
 
       {:error, _} ->
         conn
+        |> put_flutter_headers()
         |> put_status(:bad_request)
-        |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
         |> json(%{
           "error" => %{
             "code" => "no_file",
@@ -135,7 +131,7 @@ defmodule PubpubWeb.PackageController do
   def finalize(conn, %{"package" => package_name, "version" => version} = params) do
     Logger.info("Finalizing upload: #{inspect(params)}")
 
-    case FinalizeUpload.perform(package_name, version) do
+    case Packages.finalize_upload(package_name, version) do
       {:ok, _} ->
         conn
         |> put_flutter_headers()
