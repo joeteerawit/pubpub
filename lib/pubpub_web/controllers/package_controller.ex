@@ -2,20 +2,14 @@ defmodule PubpubWeb.PackageController do
   use PubpubWeb, :controller
 
   require IEx
-  alias Pubpub.PubRepo.Packages
 
-  #   iex(2)> conn.req_headers
-  # [
-  #   {"user-agent", "Dart pub 3.7.2"},
-  #   {"accept", "application/vnd.pub.v2+json"},
-  #   {"accept-encoding", "gzip"},
-  #   {"host", "localhost:4000"}
-  # ]
+  alias Pubpub.Packages.GetArchivePath
+  alias Pubpub.Packages.GetVersionMetadata
+  alias Pubpub.Packages.ListAllVersion
+
   @spec list_versions(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def list_versions(conn, %{"package" => package_name} = params) do
-    IO.inspect(params, label: "list all versions")
-
-    case Packages.get_package(package_name) do
+    case ListAllVersion.perform(package_name) do
       {:ok, package} ->
         conn
         |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
@@ -28,17 +22,12 @@ defmodule PubpubWeb.PackageController do
     end
   end
 
-  @spec new_version(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def new_version(conn, params) do
-    # In a real implementation, this would generate signed URLs
+  @spec publishing(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def publishing(conn, _params) do
     upload_url = "#{PubpubWeb.Endpoint.url()}/api/upload"
-    finalize_url = "#{PubpubWeb.Endpoint.url()}/api/finalize"
-    IO.inspect(params, label: "new_version params")
-    IO.inspect(upload_url, label: "new_version upload url")
-    IO.inspect(finalize_url, label: "new_version finalize url")
 
     conn
-    |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
+    |> put_flutter_headers()
     |> json(%{
       "url" => upload_url,
       "fields" => %{
@@ -49,12 +38,10 @@ defmodule PubpubWeb.PackageController do
     })
   end
 
-  @spec advisories(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def advisories(conn, %{"package" => _package_name}) do
-    IO.inspect("advisories>")
-    # In a real implementation, this would fetch actual advisories
+  @spec list_security_advisories(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def list_security_advisories(conn, %{"package" => _package_name}) do
     conn
-    |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
+    |> put_flutter_headers()
     |> json(%{
       "advisories" => [],
       "advisoriesUpdated" => DateTime.utc_now() |> DateTime.to_iso8601()
@@ -63,14 +50,15 @@ defmodule PubpubWeb.PackageController do
 
   @spec show_version(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def show_version(conn, %{"package" => package_name, "version" => version}) do
-    case Packages.get_package_version(package_name, version) do
-      {:ok, package_version} ->
-        IO.inspect(package_version, label: "show version")
-        json(conn, package_version)
+    case GetVersionMetadata.perform(package_name, version) do
+      {:ok, metadata} ->
+        conn
+        |> put_flutter_headers()
+        |> json(metadata)
 
       {:error, :not_found} ->
         conn
-        |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
+        |> put_flutter_headers()
         |> put_status(:not_found)
         |> json(%{
           error: %{
@@ -83,12 +71,13 @@ defmodule PubpubWeb.PackageController do
 
   @spec download(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def download(conn, %{"package" => package_name, "version" => version}) do
-    case Packages.get_package_archive_path(package_name, version) do
+    case GetArchivePath.perform(package_name, version) do
       {:ok, path} ->
         send_file(conn, 200, path)
 
       {:error, :not_found} ->
         conn
+        |> put_flutter_headers()
         |> put_status(:not_found)
         |> json(%{
           error: %{
@@ -193,5 +182,10 @@ defmodule PubpubWeb.PackageController do
         }
       })
     end
+  end
+
+  defp put_flutter_headers(conn) do
+    conn
+    |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
   end
 end

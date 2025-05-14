@@ -24,13 +24,16 @@ defmodule PubpubWeb.Router do
     pipe_through :api
 
     # List all versions of a package
+    # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#list-security-advisories-for-a-package
     get "/packages/:package", PackageController, :list_versions
 
     # Publishing Packages
-    get "/packages/versions/new", PackageController, :new_version
+    # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#list-security-advisories-for-a-package
+    get "/packages/versions/new", PackageController, :publishing
 
     # List security advisories for a package
-    get "/packages/:package/advisories", PackageController, :advisories
+    # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#list-security-advisories-for-a-package
+    get "/packages/:package/advisories", PackageController, :list_security_advisories
 
     # (Deprecated) Inspect a specific version of a package
     get "/packages/:package/versions/:version", PackageController, :show_version
