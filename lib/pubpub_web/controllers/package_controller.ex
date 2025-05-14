@@ -1,14 +1,16 @@
 defmodule PubpubWeb.PackageController do
   use PubpubWeb, :controller
 
-  require IEx
+  require Logger
 
   alias Pubpub.Packages.GetArchivePath
   alias Pubpub.Packages.GetVersionMetadata
+  alias Pubpub.Packages.FinalizeUpload
   alias Pubpub.Packages.ListAllVersion
+  alias Pubpub.Packages.Upload
 
   @spec list_versions(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def list_versions(conn, %{"package" => package_name} = params) do
+  def list_versions(conn, %{"package" => package_name}) do
     case ListAllVersion.perform(package_name) do
       {:ok, package} ->
         conn
@@ -91,40 +93,30 @@ defmodule PubpubWeb.PackageController do
   @doc """
   Handles file uploads for package publishing.
   This endpoint receives the multipart form data with the package archive.
+  %{
+    "file" => %Plug.Upload{
+      path: "/var/folders/n1/qq5t25mn711bk8g9dzym8jgh0000gn/T/plug-1747-8gPS/multipart-1747235273-778385280545-4",
+      content_type: "application/octet-stream",
+      filename: "package.tar.gz"
+    },
+    "package_name" => "test_package",
+    "timestamp" => "2025-05-14T15:07:53.913632Z",
+    "version" => "0.0.1"
+  }
   """
-  def upload(conn, params) do
-    # Log the received params for debugging
-    IO.inspect(params, label: "Upload Params")
-
-    # Extract package information
-    package_name = Map.get(params, "package_name", "unknown_package")
-    version = Map.get(params, "version", "unknown_version")
-
-    # Check if we have a file upload
-    case conn.body_params do
-      %{"file" => upload} when is_map(upload) ->
-        # Create temp directory if it doesn't exist
-        upload_dir = "priv/static/uploads/tmp/#{package_name}/#{version}"
-        File.mkdir_p!(upload_dir)
-
-        # Copy the file to the temp directory
-        dest_path = Path.join(upload_dir, "#{package_name}-#{version}.tar.gz")
-        File.copy!(upload.path, dest_path)
-
-        IO.puts("File saved to: #{dest_path}")
-
-        # Send proper response
+  def upload(conn, %{"package_name" => package_name, "version" => version} = params) do
+    case Upload.perform(params) do
+      {:ok, _} ->
         conn
         |> put_status(:no_content)
-        |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
+        |> put_flutter_headers()
         |> put_resp_header(
           "location",
           "#{PubpubWeb.Endpoint.url()}/api/finalize?package=#{package_name}&version=#{version}"
         )
         |> send_resp(204, "")
 
-      _ ->
-        # No file found in the upload
+      {:error, _} ->
         conn
         |> put_status(:bad_request)
         |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
@@ -141,46 +133,28 @@ defmodule PubpubWeb.PackageController do
   Finalizes a package upload by moving the package from temp storage to permanent storage.
   """
   def finalize(conn, %{"package" => package_name, "version" => version} = params) do
-    IO.inspect(params, label: "finalize upload: ")
-    # Create the destination directory
-    dest_dir = "priv/static/packages/#{package_name}/#{version}"
-    File.mkdir_p!(dest_dir)
+    Logger.info("Finalizing upload: #{inspect(params)}")
 
-    # Source and destination paths
-    src_path =
-      "priv/static/uploads/tmp/#{package_name}/#{version}/#{package_name}-#{version}.tar.gz"
+    case FinalizeUpload.perform(package_name, version) do
+      {:ok, _} ->
+        conn
+        |> put_flutter_headers()
+        |> json(%{
+          "success" => %{
+            "message" => "Package #{package_name} version #{version} published successfully"
+          }
+        })
 
-    dest_path = "#{dest_dir}/#{package_name}-#{version}.tar.gz"
-
-    # Check if the source file exists
-    if File.exists?(src_path) do
-      # Move the file
-      File.rename!(src_path, dest_path)
-
-      # Optionally clean up the temp directory
-      File.rm_rf!("priv/static/uploads/tmp/#{package_name}/#{version}")
-
-      IO.puts("Package finalized: #{dest_path}")
-
-      # Return success response
-      conn
-      |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
-      |> json(%{
-        "success" => %{
-          "message" => "Package #{package_name} version #{version} published successfully"
-        }
-      })
-    else
-      # File not found
-      conn
-      |> put_status(:not_found)
-      |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
-      |> json(%{
-        "error" => %{
-          "code" => "file_not_found",
-          "message" => "Package file not found in temporary storage"
-        }
-      })
+      {:error, _} ->
+        conn
+        |> put_flutter_headers()
+        |> put_status(:not_found)
+        |> json(%{
+          "error" => %{
+            "code" => "file_not_found",
+            "message" => "Package file not found in temporary storage"
+          }
+        })
     end
   end
 
