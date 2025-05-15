@@ -10,7 +10,7 @@ defmodule PubpubWeb.PackageController do
     case Packages.get_all_versions(package_name) do
       {:ok, package} ->
         conn
-        |> put_req_header("Content-Type", "application/vnd.pub.v2+json")
+        |> put_flutter_headers()
         |> json(package)
 
       {:error, :not_found} ->
