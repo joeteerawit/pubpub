@@ -20,20 +20,30 @@ defmodule PubpubWeb.PackageController do
     end
   end
 
-  @spec publishing(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def publishing(conn, _params) do
-    upload_url = "#{PubpubWeb.Endpoint.url()}/api/upload"
+  @spec pre_sign_upload(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def pre_sign_upload(conn, _params) do
+    # upload_url = "#{PubpubWeb.Endpoint.url()}/api/upload"
 
-    conn
-    |> put_flutter_headers()
-    |> json(%{
-      "url" => upload_url,
-      "fields" => %{
-        "package_name" => "test_package",
-        "version" => "0.0.1",
-        "timestamp" => DateTime.utc_now() |> DateTime.to_iso8601()
-      }
-    })
+    Packages.gen_pre_signed_url()
+    |> case do
+      {:ok, metadata} ->
+        IO.inspect(metadata)
+        conn
+        |> put_flutter_headers()
+        |> json(metadata)
+
+      {:error, _reason} ->
+        IO.inspect("Failed to generate pre-signed upload URL")
+        conn
+        |> put_flutter_headers()
+        |> put_status(:internal_server_error)
+        |> json(%{
+          error: %{
+            code: "internal_server_error",
+            message: "Failed to generate pre-signed upload URL"
+          }
+        })
+    end
   end
 
   @spec list_security_advisories(Plug.Conn.t(), map()) :: Plug.Conn.t()
@@ -102,7 +112,7 @@ defmodule PubpubWeb.PackageController do
   """
   def upload(conn, %{"package_name" => package_name, "version" => version} = params) do
     case Packages.upload(params) do
-      {:ok, _} ->
+      {:ok, :upload_completed} ->
         conn
         |> put_status(:no_content)
         |> put_flutter_headers()
@@ -112,7 +122,7 @@ defmodule PubpubWeb.PackageController do
         )
         |> send_resp(204, "")
 
-      {:error, _} ->
+      {:error, reason} ->
         conn
         |> put_flutter_headers()
         |> put_status(:bad_request)

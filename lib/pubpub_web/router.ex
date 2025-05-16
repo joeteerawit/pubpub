@@ -29,13 +29,15 @@ defmodule PubpubWeb.Router do
 
     # Publishing Packages
     # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#list-security-advisories-for-a-package
-    get "/packages/versions/new", PackageController, :publishing
+    get "/packages/versions/new", PackageController, :pre_sign_upload
 
     # List security advisories for a package
     # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#list-security-advisories-for-a-package
     get "/packages/:package/advisories", PackageController, :list_security_advisories
 
     # (Deprecated) Inspect a specific version of a package
+    # Deprecated as of Dart 2.8
+    # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#deprecated-inspect-a-specific-version-of-a-package
     get "/packages/:package/versions/:version", PackageController, :show_version
 
     # Handle uploads - NOTE: Changed to POST method
@@ -45,6 +47,8 @@ defmodule PubpubWeb.Router do
 
   scope "/packages", PubpubWeb do
     # (Deprecated) Download a specific version of a package
+    # Deprecated as of Dart 2.8
+    # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#deprecated-download-a-specific-version-of-a-package
     get "/packages/:package/versions/:version", PackageController, :download
   end
 

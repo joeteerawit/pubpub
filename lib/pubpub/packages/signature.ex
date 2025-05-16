@@ -17,6 +17,7 @@ defmodule Pubpub.Packages.Signature do
     end
   end
 
+  @spec sign(binary()) :: {:ok, binary()}
   def sign(data) do
     sign =
       :crypto.mac(:hmac, :sha256, @secret, data)
