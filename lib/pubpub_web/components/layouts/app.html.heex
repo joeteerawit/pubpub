@@ -1,32 +1,111 @@
-<header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
-    <div class="flex items-center gap-4">
-      <a href="/">
-        <img src={~p"/images/logo.svg"} width="36" />
-      </a>
-      <p class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6">
-        v{Application.spec(:phoenix, :vsn)}
-      </p>
-    </div>
-    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
-      <a href="https://twitter.com/elixirphoenix" class="hover:text-zinc-700">
-        @elixirphoenix
-      </a>
-      <a href="https://github.com/phoenixframework/phoenix" class="hover:text-zinc-700">
-        GitHub
-      </a>
-      <a
-        href="https://hexdocs.pm/phoenix/overview.html"
-        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
+<main class="bg-gray-50 text-gray-800">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block">
+      <div class="p-4 border-b border-gray-700">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-cube text-xl"></i>
+          <h1 class="text-xl font-bold"><span class="text-amber-500">PubPub</span> Packages</h1>
+        </div>
+      </div>
+      <nav class="p-4">
+        <div class="mb-6">
+          <p class="text-xs uppercase text-gray-400 font-medium mb-2">Main</p>
+          <ul class="space-y-1">
+            <li>
+              <a
+                href="/"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/search"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-600 text-white"
+              >
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-xs uppercase text-gray-400 font-medium mb-2">
+            Security
+          </p>
+          <ul class="space-y-1">
+            <li>
+              <a
+                href="/security-report"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-shield-alt"></i>
+                <span>Overview</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/security-report"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-bug"></i>
+                <span>Vulnerability Reports</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="text-xs uppercase text-gray-400 font-medium mb-2">
+            Account
+          </p>
+          <ul class="space-y-1">
+            <li>
+              <a
+                href="/user"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-user-circle"></i>
+                <span>Profile</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/user"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/login"
+                class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Mobile sidebar toggle -->
+    <div class="md:hidden fixed bottom-4 right-4 z-50">
+      <button
+        id="sidebar-toggle"
+        class="bg-blue-600 text-white p-3 rounded-full shadow-lg"
       >
-        Get Started <span aria-hidden="true">&rarr;</span>
-      </a>
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
-  </div>
-</header>
-<main class="px-4 py-20 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-2xl">
-    <.flash_group flash={@flash} />
+
     {@inner_content}
   </div>
 </main>

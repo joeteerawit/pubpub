@@ -122,7 +122,7 @@ defmodule PubpubWeb.PackageController do
         )
         |> send_resp(204, "")
 
-      {:error, reason} ->
+      {:error, _reason} ->
         conn
         |> put_flutter_headers()
         |> put_status(:bad_request)

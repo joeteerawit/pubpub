@@ -14,10 +14,35 @@ defmodule PubpubWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PubpubWeb do
-    pipe_through :browser
+  pipeline :login_view do
+    plug :put_root_layout, {PubpubWeb.Layouts, :login}
+  end
 
-    get "/", PageController, :home
+  # scope "/", PubpubWeb do
+  #   pipe_through :browser
+
+  #   get "/", PageController, :home
+  # end
+
+  live_session :login_view, on_mount: [] do
+    scope "/", PubpubWeb do
+      pipe_through :browser
+
+      scope "/login", Live do
+        live "/", LoginLive
+      end
+    end
+  end
+
+  live_session :live_view, on_mount: [] do
+    scope "/", PubpubWeb.Live do
+      pipe_through :browser
+
+      live "/", DashBoardLive
+      live "/user", UserLive
+      live "/search", SearchLive
+      live "/security-report", SecurityReportLive
+    end
   end
 
   scope "/api", PubpubWeb do
@@ -46,6 +71,7 @@ defmodule PubpubWeb.Router do
   end
 
   scope "/packages", PubpubWeb do
+    pipe_through :api
     # (Deprecated) Download a specific version of a package
     # Deprecated as of Dart 2.8
     # https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#deprecated-download-a-specific-version-of-a-package

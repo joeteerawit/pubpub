@@ -59,6 +59,15 @@ defmodule PubpubWeb do
     end
   end
 
+  def login_live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {PubpubWeb.Layouts, :login}
+
+      unquote(html_helpers())
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent
