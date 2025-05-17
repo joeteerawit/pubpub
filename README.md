@@ -1,11 +1,5 @@
 # Pubpub
-<style>
-img
-{
-    display:block;
-    float:none;
-    margin-left:auto;
-    margin-right:auto;
-}
-</style>
-![pubpub_logo](/priv/static/images/pubpub_logo.png)
+
+<p align="center">
+    <img src="/priv/static/images/pubpub_logo.png" />
+</p>
