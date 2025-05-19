@@ -4,8 +4,12 @@
     <aside class="bg-gray-800 text-white w-64 flex-shrink-0 hidden md:block">
       <div class="p-4 border-b border-gray-700">
         <div class="flex items-center space-x-4">
-          <i class="fas fa-cube text-xl"></i>
-          <h1 class="text-xl font-bold"><span class="text-amber-500">PubPub</span> Packages</h1>
+          <img src={Phoenix.VerifiedRoutes.static_path(@socket,
+          "/images/pubpub_logo.svg")} alt="PubPub Packages" class="h-6" />
+
+          <h1 class="text-xl font-bold">
+            <span class="text-amber-500">PubPub</span> Packages
+          </h1>
         </div>
       </div>
       <nav class="p-4">
